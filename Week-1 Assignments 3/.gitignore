@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+env
+.DS_Store
+.local_state.json
+/.claude/
+/.codebase-memory-cache/
+.context-engine-port
+.context-engine.pid
+.context-engine.log
+.last-checkup
+.mcp.*
