@@ -1,8 +1,5 @@
 class SeriesCalculator:
 
-  def __init__(self):
-    pass
-
   def calculate_fibonacci(self, n: int):
     print(f"Generates a Fibonacci series up to {n} terms.\n output result below \n")
     if n <= 0:
