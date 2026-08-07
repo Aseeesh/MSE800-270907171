@@ -1,7 +1,9 @@
 class BMICalulator:
+    def get_bmi(self, weight, height):
+        return weight / (height ** 2)
 
     def get_bmi_category(self, weight, height):
-        bmi = weight / (height ** 2)
+        bmi = self.get_bmi(weight, height)
         if bmi < 18.5:
             return "Underweight"
         elif 18.5 <= bmi < 24.9:
