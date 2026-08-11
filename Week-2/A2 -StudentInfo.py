@@ -1,80 +1,67 @@
-# ==============================================================================
-# (get_info) of an individual student into a single unit.
-# ==============================================================================
+# Bundles data fields (name, ID, age, address) and methods into a single class.
 class Student:
-    def __init__(self, name: str,student_id: int, age: int,address: str = None):
-        self.name = name  # Property
-        self.student_id = student_id  # Property
-        self.age = age    # Property
-        self.address = address  # Placeholder for future expansion (e.g., address attribute)
+    def __init__(self, name: str, student_id: str, age: int, address: str):
+        self.name = name          # Attribute
+        self.student_id = student_id  # Attribute
+        self.age = age            # Attribute
+        self.address = address    # Attribute
 
+  # this function returns the formatted student details
     def get_info(self) -> str:
-        """Returns a formatted string of student details."""
-        if self.address:
-            return f"Name: {self.name:<15} | ID: {self.student_id} | Age: {self.age} | Address: {self.address}"
-        return f"Name: {self.name:<15} | ID: {self.student_id} | Age: {self.age}"
+        """Returns formatted student details."""
+        return f"ID: {self.student_id:<8} | Name: {self.name:<15} | Age: {self.age:<3} | Address: {self.address}"
 
-# ============================================================================== 
-# sorting algorithms, and user input validation behind clear methods.
-# ==============================================================================
+
+# Hides list management, sorting details, and input validation from main().
 class StudentManager:
     def __init__(self):
-        self.student_list = []  # Stores instances of Student objects
+        self.student_list = []  # List holding Student object instances
 
+    # this function adds a new student to the list after validating inputs
     def add_student(self):
-        """Prompts user for details, validates input, and creates a Student object."""
         print("\n--- Enter Student Details ---")
         name = input("Enter student name: ").strip()
+        student_id = input("Enter student ID: ").strip()
 
-        # TRY-EXCEPT: Input validation for age
+        # TRY-EXCEPT: Prevents crashes from invalid age inputs
         while True:
             try:
                 age = int(input("Enter student age: "))
                 if age <= 0:
                     print("Age must be greater than 0. Try again.")
                     continue
-                break  # Exit loop if age is valid
-            except ValueError:
-                print("Error: Please enter a valid integer for age.")
-
-        # Creating a new Student object using the validated inputs
-        address = input("Enter student address (optional): ").strip()
-        while True:
-            try:
-                student_id = int(input("Enter student ID: "))
-                if student_id <= 0:
-                    print("Student ID must be a positive integer. Try again.")
-                    continue
                 break
             except ValueError:
-                print("Error: Please enter a valid integer for student ID.")
+                print("Error: Please enter a valid number for age.")
 
-        new_student = Student(name, student_id, age, address if address else None)
+        address = input("Enter student address: ").strip()
+
+        # OOP CONCEPT: Object Instantiation
+        new_student = Student(name, student_id, age, address)
         self.student_list.append(new_student)
         print(f"--> Added '{name}' successfully.")
 
     def display_sorted_by_age(self):
-        """Sorts students by age in ascending order and displays them."""
+        """Sorts students by age (ascending) and displays the updated list."""
         if not self.student_list:
             print("\nNo students to display.")
             return
 
-        # SORTING: Uses Python's sorted() with a lambda key to sort by the 'age' attribute
+        # SORTING: Lambda extracts the 'age' property from each Student object
         sorted_students = sorted(self.student_list, key=lambda student: student.age)
 
-        print("\n" + "=" * 38)
-        print("    STUDENT LIST (SORTED BY AGE)    ")
-        print("=" * 38)
+        print("\n" + "=" * 65)
+        print("           CURRENT STUDENT LIST (SORTED BY AGE)")
+        print("=" * 65)
         for index, student in enumerate(sorted_students, start=1):
-            # Invoking the encapsulated method from the Student object
             print(f"{index}. {student.get_info()}")
-        print("=" * 38)
+        print("=" * 65)
 
 
 def main():
     manager = StudentManager()
 
-    # Outer TRY-EXCEPT to catch runtime interruptions (e.g., KeyboardInterrupt)
+    # Outer TRY-EXCEPT to catch runtime interrupts safely
     try:
         while True:
             manager.add_student()
@@ -85,7 +72,7 @@ def main():
                 print("\nGoodbye!")
                 break
     except Exception as error:
-        print(f"\nAn unexpected program error occurred: {error}")
+        print(f"\nAn unexpected error occurred: {error}")
 
 
 if __name__ == "__main__":
