@@ -32,7 +32,6 @@ class Student(BaseModel):
     date_of_enrolment = Column(Date, nullable=False)
     email = Column(String(100), unique=True)
     
-    # Relationships
     enrollments = relationship("Enrollment", back_populates="student")
     
     def __repr__(self):
@@ -48,7 +47,6 @@ class Lecturer(BaseModel):
     department = Column(String(100), nullable=False)
     hire_date = Column(Date, nullable=False)
     
-    # Relationships
     subjects = relationship("Subject", back_populates="lecturer")
     
     def __repr__(self):
@@ -63,10 +61,8 @@ class Subject(BaseModel):
     description = Column(Text)
     max_students = Column(Integer, default=30)
     
-    # Foreign Key
     lecturer_id = Column(String(36), ForeignKey('lecturers.id'), nullable=False)
     
-    # Relationships
     lecturer = relationship("Lecturer", back_populates="subjects")
     enrollments = relationship("Enrollment", back_populates="subject")
     
@@ -76,7 +72,6 @@ class Subject(BaseModel):
 class Enrollment(BaseModel):
     __tablename__ = 'enrollments'
     
-    # Foreign Keys
     student_id = Column(String(36), ForeignKey('students.id'), nullable=False)
     subject_id = Column(String(36), ForeignKey('subjects.id'), nullable=False)
     
@@ -86,7 +81,6 @@ class Enrollment(BaseModel):
     year = Column(Integer, nullable=False)
     grade = Column(String(2))
     
-    # Relationships
     student = relationship("Student", back_populates="enrollments")
     subject = relationship("Subject", back_populates="enrollments")
     
@@ -96,7 +90,6 @@ class Enrollment(BaseModel):
 class Lecture(BaseModel):
     __tablename__ = 'lectures'
     
-    # Foreign Keys
     subject_id = Column(String(36), ForeignKey('subjects.id'), nullable=False)
     lecturer_id = Column(String(36), ForeignKey('lecturers.id'), nullable=False)
     
@@ -107,7 +100,6 @@ class Lecture(BaseModel):
     end_time = Column(Time, nullable=False)
     room = Column(String(50), nullable=False)
     
-    # Relationships
     subject = relationship("Subject")
     lecturer = relationship("Lecturer")
     
