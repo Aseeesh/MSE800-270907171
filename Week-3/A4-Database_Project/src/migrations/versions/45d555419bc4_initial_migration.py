@@ -1,15 +1,15 @@
-"""Initial migration - Create all tables
+"""Initial migration
 
-Revision ID: cd709230b81a
+Revision ID: 45d555419bc4
 Revises: 
-Create Date: 2026-08-19 09:07:15.993434
+Create Date: 2026-08-19 09:57:13.018586
 
 """
 from alembic import op
 import sqlalchemy as sa
 
 
-revision = 'cd709230b81a'
+revision = '45d555419bc4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,15 +21,18 @@ def upgrade():
     sa.Column('last_name', sa.String(length=100), nullable=False),
     sa.Column('lecturer_code', sa.String(length=20), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=False),
+    sa.Column('phone', sa.String(length=20), nullable=True),
+    sa.Column('address', sa.String(length=200), nullable=True),
     sa.Column('department', sa.String(length=100), nullable=False),
     sa.Column('hire_date', sa.Date(), nullable=False),
+    sa.Column('specialization', sa.String(length=100), nullable=True),
     sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('created_at', sa.Date(), nullable=True),
-    sa.Column('updated_at', sa.Date(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('lecturer_code')
+    sa.UniqueConstraint('email')
     )
+    op.create_index(op.f('ix_lecturers_lecturer_code'), 'lecturers', ['lecturer_code'], unique=True)
     op.create_table('students',
     sa.Column('first_name', sa.String(length=100), nullable=False),
     sa.Column('last_name', sa.String(length=100), nullable=False),
@@ -38,43 +41,50 @@ def upgrade():
     sa.Column('date_of_birth', sa.Date(), nullable=False),
     sa.Column('date_of_enrolment', sa.Date(), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=True),
+    sa.Column('phone', sa.String(length=20), nullable=True),
+    sa.Column('address', sa.String(length=200), nullable=True),
     sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('created_at', sa.Date(), nullable=True),
-    sa.Column('updated_at', sa.Date(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('national_id'),
-    sa.UniqueConstraint('student_code')
+    sa.UniqueConstraint('national_id')
     )
+    op.create_index(op.f('ix_students_student_code'), 'students', ['student_code'], unique=True)
     op.create_table('subjects',
     sa.Column('subject_code', sa.String(length=20), nullable=False),
     sa.Column('subject_name', sa.String(length=200), nullable=False),
     sa.Column('units', sa.Integer(), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('level', sa.String(length=20), nullable=True),
     sa.Column('max_students', sa.Integer(), nullable=True),
     sa.Column('lecturer_id', sa.String(length=36), nullable=False),
     sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('created_at', sa.Date(), nullable=True),
-    sa.Column('updated_at', sa.Date(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['lecturer_id'], ['lecturers.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('subject_code')
+    sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_subjects_subject_code'), 'subjects', ['subject_code'], unique=True)
     op.create_table('enrollments',
     sa.Column('student_id', sa.String(length=36), nullable=False),
     sa.Column('subject_id', sa.String(length=36), nullable=False),
     sa.Column('enrollment_date', sa.Date(), nullable=False),
-    sa.Column('status', sa.Enum('ACTIVE', 'COMPLETED', 'DROPPED', name='enrollmentstatus'), nullable=True),
+    sa.Column('status', sa.Enum('PENDING', 'ACTIVE', 'COMPLETED', 'DROPPED', 'FAILED', name='enrollmentstatus'), nullable=True),
     sa.Column('semester', sa.String(length=20), nullable=False),
     sa.Column('year', sa.Integer(), nullable=False),
     sa.Column('grade', sa.String(length=2), nullable=True),
+    sa.Column('grade_points', sa.Integer(), nullable=True),
+    sa.Column('attendance_percentage', sa.Integer(), nullable=True),
     sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('created_at', sa.Date(), nullable=True),
-    sa.Column('updated_at', sa.Date(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['student_id'], ['students.id'], ),
     sa.ForeignKeyConstraint(['subject_id'], ['subjects.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_enrollments_student_id'), 'enrollments', ['student_id'], unique=False)
+    op.create_index(op.f('ix_enrollments_subject_id'), 'enrollments', ['subject_id'], unique=False)
     op.create_table('lectures',
     sa.Column('subject_id', sa.String(length=36), nullable=False),
     sa.Column('lecturer_id', sa.String(length=36), nullable=False),
@@ -83,22 +93,35 @@ def upgrade():
     sa.Column('lecture_date', sa.Date(), nullable=False),
     sa.Column('start_time', sa.Time(), nullable=False),
     sa.Column('end_time', sa.Time(), nullable=False),
+    sa.Column('day_of_week', sa.String(length=20), nullable=False),
     sa.Column('room', sa.String(length=50), nullable=False),
+    sa.Column('building', sa.String(length=50), nullable=True),
+    sa.Column('capacity', sa.Integer(), nullable=True),
     sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('created_at', sa.Date(), nullable=True),
-    sa.Column('updated_at', sa.Date(), nullable=True),
+    sa.Column('created_at', sa.DateTime(), nullable=True),
+    sa.Column('updated_at', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['lecturer_id'], ['lecturers.id'], ),
     sa.ForeignKeyConstraint(['subject_id'], ['subjects.id'], ),
-    sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('lecture_code')
+    sa.PrimaryKeyConstraint('id')
     )
+    op.create_index(op.f('ix_lectures_lecture_code'), 'lectures', ['lecture_code'], unique=True)
+    op.create_index(op.f('ix_lectures_lecturer_id'), 'lectures', ['lecturer_id'], unique=False)
+    op.create_index(op.f('ix_lectures_subject_id'), 'lectures', ['subject_id'], unique=False)
     # ### end Alembic commands ###
 
 def downgrade():
     # ### commands auto generated by Alembic - please adjust! ###
+    op.drop_index(op.f('ix_lectures_subject_id'), table_name='lectures')
+    op.drop_index(op.f('ix_lectures_lecturer_id'), table_name='lectures')
+    op.drop_index(op.f('ix_lectures_lecture_code'), table_name='lectures')
     op.drop_table('lectures')
+    op.drop_index(op.f('ix_enrollments_subject_id'), table_name='enrollments')
+    op.drop_index(op.f('ix_enrollments_student_id'), table_name='enrollments')
     op.drop_table('enrollments')
+    op.drop_index(op.f('ix_subjects_subject_code'), table_name='subjects')
     op.drop_table('subjects')
+    op.drop_index(op.f('ix_students_student_code'), table_name='students')
     op.drop_table('students')
+    op.drop_index(op.f('ix_lecturers_lecturer_code'), table_name='lecturers')
     op.drop_table('lecturers')
     # ### end Alembic commands ###
