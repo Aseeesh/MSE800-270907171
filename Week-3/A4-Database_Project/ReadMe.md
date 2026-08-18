@@ -10,3 +10,7 @@ pip install python-dotenv
 pip install alembic
 
 pip freeze > requirements.txt
+pip install -r requirements.txt
+
+# Start PostgreSQL
+docker compose up -d postgres
