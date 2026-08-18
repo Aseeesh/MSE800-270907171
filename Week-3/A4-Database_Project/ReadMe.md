@@ -18,13 +18,15 @@ markdown
 | LECTURER → LECTURE | One-to-Many | One lecturer can conduct many lectures |
 
 # Create a venv instead
+```
 python3 -m venv .venv 
 source .venv/bin/activate
-
+```
 # 1. Clean everything
+```
 docker compose down -v
 rm -rf src/migrations/versions/*.py 
-
+```
 # 2. Commands
 ```
 python src/seed.py
@@ -36,3 +38,4 @@ alembic revision --autogenerate -m "Initial migration"	Create migration
 alembic upgrade head	Apply migration
 python src/seed.py	Seed database
 python src/main.py	Run queries
+```
