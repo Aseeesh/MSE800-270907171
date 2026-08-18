@@ -1,7 +1,7 @@
 """Repository pattern for database operations"""
 from sqlalchemy.orm import Session
-from typing import List, Optional
-from src.models import Student, Lecturer, Subject, Enrollment, Lecture
+from typing import List
+from models import Student, Lecturer, Subject, Enrollment, Lecture
 
 class BaseRepository:
     """Base repository with common CRUD operations"""
