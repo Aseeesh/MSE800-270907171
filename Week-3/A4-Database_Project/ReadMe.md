@@ -1,5 +1,3 @@
-
-markdown
 # University Database Management System
 
 ## ER Diagram 
